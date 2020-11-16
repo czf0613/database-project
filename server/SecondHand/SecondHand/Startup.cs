@@ -21,10 +21,15 @@ namespace SecondHand
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-
             services.AddDbContext<Databases>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("SQLiteContext")));
+
+            services.AddControllers().AddJsonOptions(option =>
+            {
+                option.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+                option.JsonSerializerOptions.AllowTrailingCommas = false;
+                option.JsonSerializerOptions.WriteIndented = true;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -36,8 +41,6 @@ namespace SecondHand
             }
 
             app.UseRouting();
-
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
