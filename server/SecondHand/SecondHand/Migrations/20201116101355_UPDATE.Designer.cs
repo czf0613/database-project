@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SecondHand.model;
 
 namespace SecondHand.Migrations
 {
     [DbContext(typeof(Databases))]
-    partial class DatabasesModelSnapshot : ModelSnapshot
+    [Migration("20201116101355_UPDATE")]
+    partial class UPDATE
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -106,9 +108,8 @@ namespace SecondHand.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Gender")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Gender")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("IDNumber")
                         .HasMaxLength(18)
