@@ -31,6 +31,7 @@ namespace SecondHand.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("Price")
+                        .HasPrecision(10, 4)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTimeOffset>("ReleaseTime")
@@ -62,6 +63,7 @@ namespace SecondHand.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<decimal>("Auction")
+                        .HasPrecision(10, 4)
                         .HasColumnType("TEXT");
 
                     b.Property<int>("BuyerId")
@@ -144,12 +146,19 @@ namespace SecondHand.Migrations
                     b.Property<DateTimeOffset>("RegistrationTime")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("SerialNumber")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserName", "Phone", "SerialNumber")
+                        .IsUnique();
 
                     b.ToTable("Users");
 
@@ -166,11 +175,6 @@ namespace SecondHand.Migrations
                     b.Property<int>("Level")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("SerialNumber")
-                        .IsRequired()
-                        .HasColumnType("TEXT")
-                        .HasColumnName("Admin_SerialNumber");
-
                     b.HasDiscriminator().HasValue("Admin");
                 });
 
@@ -183,14 +187,11 @@ namespace SecondHand.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Dormitory")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Major")
                         .HasMaxLength(40)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SerialNumber")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasDiscriminator().HasValue("Student");

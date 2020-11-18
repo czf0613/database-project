@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SecondHand.model.json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -19,7 +18,7 @@ namespace SecondHand.model
 
         public Databases(DbContextOptions<Databases> Options): base(Options)
         {
-            Console.WriteLine("Database Initialization started.");
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -47,8 +46,25 @@ namespace SecondHand.model
                 v => (Gender)Enum.Parse(typeof(Gender), v)
                 );
 
+            modelBuilder.Entity<User>()
+                .HasIndex(u => new { u.UserName, u.Phone, u.SerialNumber })
+                .IsUnique();
+
+            modelBuilder.Entity<Commodity>()
+                .Property(e => e.Price)
+                .HasPrecision(10, 4);
+
+            modelBuilder.Entity<SalesRecord>()
+                .Property(e => e.Auction)
+                .HasPrecision(10, 4);
+
             Console.WriteLine("Database Migration Success");
         }
+    }
+
+    public enum Gender
+    {
+        MALE, FEMALE, UNKNOWN, SECRET
     }
 
     public class User
@@ -59,12 +75,12 @@ namespace SecondHand.model
 
         [Required]
         [StringLength(30)]
-        public string UserName { get; set; }
+        public string UserName { get; set; } = "default";
 
         [Required]
         [StringLength(50, MinimumLength = 8)]
         [JsonIgnore]
-        public string Password { get; set; }
+        public string Password { get; set; } = "12345678";
 
         [Required]
         public string IconURL { get; set; } = "https://pic-bed.xyz/res/icons/default.png";
@@ -74,6 +90,9 @@ namespace SecondHand.model
 
         [Required]
         public string Name { get; set; }
+
+        [Required]
+        public string SerialNumber { get; set; }
 
         [Required]
         public string Profile { get; set; } = "这个人很懒，什么简介都没有写";
@@ -95,6 +114,7 @@ namespace SecondHand.model
         public DateTimeOffset Birthday { get; set; }
 
         [Required]
+        [JsonIgnore]
         public DateTimeOffset RegistrationTime { get; set; } = DateTimeOffset.Now;
 
         [NotMapped]
@@ -111,14 +131,23 @@ namespace SecondHand.model
                 return gap;
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is User))
+                return false;
+            var user = (User)obj;
+            return user.UserName == this.UserName;
+        }
+
+        public override int GetHashCode()
+        {
+            return (this.Id + this.UserName).GetHashCode();
+        }
     }
 
     public class Student: User
     {
-        [Required]
-        [RegularExpression(@"^20[0-9]{10}$")]
-        public string SerialNumber { get; set; }
-
         [StringLength(40)]
         public string College { get; set; }
 
@@ -136,16 +165,33 @@ namespace SecondHand.model
 
         [Required]
         public List<SalesRecord> Bought { get; set; } = new List<SalesRecord>();
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (this.College + this.Major + this.Dormitory).GetHashCode();
+        }
     }
 
     public class Admin: User
     {
         public string Department { get; set; } = "NetWork Center";
 
-        [Required]
-        public string SerialNumber { get; set; }
-
         public int Level { get; set; } = 1;
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 
     public class Commodity

@@ -7,14 +7,20 @@ namespace SecondHand
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            CreateHostBuilder(args)
+                .Build()
+                .Run();
         }
 
+        
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseUrls("http://localhost:12138").UseStartup<Startup>();
+                    webBuilder
+                    .UseUrls("http://localhost:12138")
+                    .UseKestrel()
+                    .UseStartup<Startup>();
                 });
     }
 }

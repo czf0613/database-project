@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SecondHand.model;
+using System.Text.Json.Serialization;
 
 namespace SecondHand
 {
@@ -21,14 +22,16 @@ namespace SecondHand
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddResponseCompression();
+
             services.AddDbContext<Databases>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("SQLiteContext")));
 
             services.AddControllers().AddJsonOptions(option =>
             {
-                option.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
                 option.JsonSerializerOptions.AllowTrailingCommas = false;
                 option.JsonSerializerOptions.WriteIndented = true;
+                option.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             });
         }
 
@@ -39,9 +42,14 @@ namespace SecondHand
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseExceptionHandler("/error");
+            }
 
+            app.UsePathBase("/api");
+            app.UseResponseCompression();
             app.UseRouting();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
