@@ -3,8 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace SecondHand.model
 {
@@ -16,7 +18,7 @@ namespace SecondHand.model
         public DbSet<Commodity> Commodities { get; set; }
         public DbSet<SalesRecord> SalesRecords { get; set; }
 
-        public Databases(DbContextOptions<Databases> Options): base(Options)
+        public Databases(DbContextOptions<Databases> options): base(options)
         {
             
         }
@@ -24,12 +26,20 @@ namespace SecondHand.model
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             Console.WriteLine("Database Creating Or Updating...");
+            var valueComparer = new ValueComparer<List<string>>(
+                (c1, c2) => c1.SequenceEqual(c2),
+                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                c => c.ToList());
             modelBuilder.Entity<Commodity>()
                 .Property(e => e.Photos)
                 .HasConversion(
                 v => (v == null || v.Count == 0) ? "[]" : JsonSerializer.Serialize(v, null),
                 v => (v == null || v.Length == 0) ? new List<string>() : JsonSerializer.Deserialize<List<string>>(v, null)
                 );
+            modelBuilder.Entity<Commodity>()
+                .Property(e => e.Photos)
+                .Metadata
+                .SetValueComparer(valueComparer);
 
             modelBuilder.Entity<SalesRecord>()
                 .HasOne(e => e.Seller)
@@ -57,6 +67,11 @@ namespace SecondHand.model
             modelBuilder.Entity<SalesRecord>()
                 .Property(e => e.Auction)
                 .HasPrecision(10, 4);
+
+            modelBuilder.Entity<Commodity>()
+                .HasOne(c => c.SalesRecord)
+                .WithOne(s => s.Commodity)
+                .HasForeignKey<SalesRecord>(s => s.CommodityId);
 
             Console.WriteLine("Database Migration Success");
         }
@@ -156,14 +171,14 @@ namespace SecondHand.model
 
         [Required]
         public string Dormitory { get; set; } = "";
-
-        [Required]
+        
+        [JsonIgnore]
         public List<Commodity> AllMyCommodities { get; set; } = new List<Commodity>();
-
-        [Required]
+        
+        [JsonIgnore]
         public List<SalesRecord> Sold { get; set; } = new List<SalesRecord>();
-
-        [Required]
+        
+        [JsonIgnore]
         public List<SalesRecord> Bought { get; set; } = new List<SalesRecord>();
 
         public override bool Equals(object obj)
@@ -179,19 +194,11 @@ namespace SecondHand.model
 
     public class Admin: User
     {
+        [Required]
         public string Department { get; set; } = "NetWork Center";
 
+        [Required]
         public int Level { get; set; } = 1;
-
-        public override bool Equals(object obj)
-        {
-            return base.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
     }
 
     public class Commodity
@@ -221,6 +228,9 @@ namespace SecondHand.model
 
         [ConcurrencyCheck]
         public bool Sold { get; set; } = false;
+        
+        [ConcurrencyCheck]
+        public SalesRecord SalesRecord { get; set; }
     }
 
     public class SalesRecord
@@ -229,7 +239,7 @@ namespace SecondHand.model
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required]
+        public int CommodityId { get; set; }
         public Commodity Commodity { get; set; }
 
         [Required]
@@ -247,7 +257,6 @@ namespace SecondHand.model
         [Required]
         public decimal Auction { get; set; } = 0.0M;
 
-        [ConcurrencyCheck]
         public bool Check { get; set; } = false;
     }
 }
