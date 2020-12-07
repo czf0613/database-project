@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SecondHand.model;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
+using SecondHand.Model;
 
 namespace SecondHand.controller
 {
@@ -11,10 +11,14 @@ namespace SecondHand.controller
     public class LoginController : ControllerBase
     {
         private readonly Databases databases;
+        
+        //still need to implement
+        private readonly TokenDatabase tokenDatabase;
 
-        public LoginController(Databases databases)
+        public LoginController(Databases databases, TokenDatabase tokenDatabase)
         {
             this.databases = databases;
+            this.tokenDatabase = tokenDatabase;
         }
 
         [HttpPost("[action]")]
@@ -30,18 +34,10 @@ namespace SecondHand.controller
             if (await countPhone != 0)
                 return BadRequest("Phone Number already exist");
 
-            try
-            {
-                var addStudent = await databases.Students.AddAsync(student);
-                await databases.SaveChangesAsync();
+            var addStudent = await databases.Students.AddAsync(student);
+            await databases.SaveChangesAsync();
 
-                return Ok(addStudent.Entity);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return BadRequest("Concurrent Modification occurs");
-            }
+            return Ok(addStudent.Entity);
         }
 
         [HttpPost("[action]")]
@@ -58,18 +54,10 @@ namespace SecondHand.controller
             if (await countPhone != 0)
                 return BadRequest("Phone Number already exist");
 
-            try
-            {
-                var addAdmin = await databases.Admins.AddAsync(admin);
-                await databases.SaveChangesAsync();
+            var addAdmin = await databases.Admins.AddAsync(admin);
+            await databases.SaveChangesAsync();
 
-                return Ok(addAdmin.Entity);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return BadRequest("Concurrent Modification occurs");
-            }
+            return Ok(addAdmin.Entity);
         }
 
         [HttpPost("[action]")]
@@ -82,7 +70,8 @@ namespace SecondHand.controller
             var person = await databases.Students.Where(s => s.UserName == userName).FirstAsync();
             if (BCrypt.Net.BCrypt.EnhancedVerify(password, person.Password))
             {
-                return Ok(person);
+                var body = new StudentCredential {Credential = person};
+                return Ok(body);
             }
             else
             {
@@ -100,69 +89,52 @@ namespace SecondHand.controller
             var person = await databases.Admins.Where(a => a.UserName == userName).FirstAsync();
             if (BCrypt.Net.BCrypt.EnhancedVerify(password, person.Password))
             {
-                return Ok(person);
+                var body = new AdminCredential {Credential = person};
+                return Ok(body);
             }
-            else
-            {
-                return BadRequest("Login Failed");
-            }
+
+            return BadRequest("Login Failed");
         }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> Self([FromBody] Student student)
         {
-            try
-            {
-                var old = await databases.Students.Where(s => s.UserName == student.UserName).FirstAsync();
+            var old = await databases.Students.Where(s => s.UserName == student.UserName).FirstAsync();
 
-                old.Name = student.Name;
-                old.Gender = student.Gender;
-                old.IconURL = student.IconURL;
-                old.SerialNumber = student.SerialNumber;
-                old.Profile = student.Profile;
-                old.Phone = student.Phone;
-                old.Email = student.Email;
-                old.Birthday = student.Birthday;
-                old.Major = student.Major;
-                old.College = student.College;
-                old.Dormitory = student.Dormitory;
+            old.Name = student.Name;
+            old.Gender = student.Gender;
+            old.IconURL = student.IconURL;
+            old.SerialNumber = student.SerialNumber;
+            old.Profile = student.Profile;
+            old.Phone = student.Phone;
+            old.Email = student.Email;
+            old.Birthday = student.Birthday;
+            old.Major = student.Major;
+            old.College = student.College;
+            old.Dormitory = student.Dormitory;
 
-                await databases.SaveChangesAsync();
-                return Ok("Modify Self Information Success");
-            }
-            catch(Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return BadRequest("Fail to modify self-information");
-            }
+            await databases.SaveChangesAsync();
+            return Ok("Modify Self Information Success");
         }
 
         [HttpPost("[action]")]
         public async Task<IActionResult> AdminSelf([FromBody] Admin admin)
         {
-            try
-            {
-                var old = await databases.Admins.Where(a => a.UserName == admin.UserName).FirstAsync();
+            var old = await databases.Admins.Where(a => a.UserName == admin.UserName).FirstAsync();
 
-                old.Name = admin.Name;
-                old.Gender = admin.Gender;
-                old.IconURL = admin.IconURL;
-                old.SerialNumber = admin.SerialNumber;
-                old.Profile = admin.Profile;
-                old.Phone = admin.Phone;
-                old.Email = admin.Email;
-                old.Birthday = admin.Birthday;
-                old.Department = admin.Department;
-                old.Level = admin.Level;
+            old.Name = admin.Name;
+            old.Gender = admin.Gender;
+            old.IconURL = admin.IconURL;
+            old.SerialNumber = admin.SerialNumber;
+            old.Profile = admin.Profile;
+            old.Phone = admin.Phone;
+            old.Email = admin.Email;
+            old.Birthday = admin.Birthday;
+            old.Department = admin.Department;
+            old.Level = admin.Level;
 
-                await databases.SaveChangesAsync();
-                return Ok("Modify Self Information Success");
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return BadRequest("Fail to modify self-information");
-            }
+            await databases.SaveChangesAsync();
+            return Ok("Modify Self Information Success");
         }
 
         [HttpPost("[action]")]
@@ -172,17 +144,15 @@ namespace SecondHand.controller
             if (personCnt == 0)
                 return BadRequest("Change Password Failed");
 
-            var person = databases.Users.Where(u => u.UserName == userName).First();
+            var person = databases.Users.First(u => u.UserName == userName);
             if (BCrypt.Net.BCrypt.EnhancedVerify(oldPassword, person.Password))
             {
                 person.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(newPassword);
                 await databases.SaveChangesAsync();
                 return Ok("Change Password Success");
             }
-            else
-            {
-                return BadRequest("Change Password Failed");
-            }
+
+            return BadRequest("Change Password Failed");
         }
 
         [Route("/error")]

@@ -18,7 +18,7 @@ namespace SecondHand
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
-                    .UseUrls("http://localhost:12138")
+                    .UseUrls("http://*:12138")
                     .UseKestrel()
                     .UseStartup<Startup>();
                 });

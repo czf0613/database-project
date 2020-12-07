@@ -25,7 +25,10 @@ namespace SecondHand
             services.AddResponseCompression();
 
             services.AddDbContext<Databases>(options =>
-                options.UseSqlite(Configuration.GetConnectionString("SQLiteContext")));
+                options.UseSqlite(Configuration.GetConnectionString("MainDBContext")));
+            
+            services.AddDbContext<TokenDatabase>(options =>
+                options.UseSqlite(Configuration.GetConnectionString("UserDBContext")));
 
             services.AddControllers().AddJsonOptions(option =>
             {

@@ -1,4 +1,0 @@
-﻿namespace SecondHand.model.json
-{
-
-}
