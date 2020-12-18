@@ -11,18 +11,10 @@ namespace SecondHand.Model
         Web
     }
 
-    public class StudentCredential
+    public class IdentityCredential
     {
         public string Token { get; set; }
-        public Student Credential { get; set; }
-        public DateTimeOffset ExpireDate { get; set; } = DateTimeOffset.Now.AddDays(15);
-        public Platform Platform { get; set; } = Platform.Web;
-    }
-
-    public class AdminCredential
-    {
-        public string Token { get; set; }
-        public Admin Credential { get; set; }
+        public dynamic Credential { get; set; }
         public DateTimeOffset ExpireDate { get; set; } = DateTimeOffset.Now.AddDays(15);
         public Platform Platform { get; set; } = Platform.Web;
     }

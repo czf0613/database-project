@@ -4,6 +4,7 @@ using SecondHand.model;
 using System.Linq;
 using System.Threading.Tasks;
 using SecondHand.Model;
+using SecondHand.Service;
 
 namespace SecondHand.controller
 {
@@ -11,14 +12,12 @@ namespace SecondHand.controller
     public class LoginController : ControllerBase
     {
         private readonly Databases databases;
-        
-        //still need to implement
-        private readonly TokenDatabase tokenDatabase;
+        private readonly ICredentialManager credentialManager;
 
-        public LoginController(Databases databases, TokenDatabase tokenDatabase)
+        public LoginController(Databases databases, ICredentialManager credentialManager)
         {
             this.databases = databases;
-            this.tokenDatabase = tokenDatabase;
+            this.credentialManager = credentialManager;
         }
 
         [HttpPost("[action]")]
@@ -61,39 +60,29 @@ namespace SecondHand.controller
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Login(string userName, string password)
+        public async Task<IActionResult> Login(string userName, string password, int role = 0)
         {
-            var personCnt = await databases.Students.Where(s => s.UserName == userName).CountAsync();
-            if (personCnt == 0)
-                return BadRequest("Login Failed");
-
-            var person = await databases.Students.Where(s => s.UserName == userName).FirstAsync();
-            if (BCrypt.Net.BCrypt.EnhancedVerify(password, person.Password))
-            {
-                var body = new StudentCredential {Credential = person};
-                return Ok(body);
-            }
-            else
-            {
-                return BadRequest("Login Failed");
-            }
+            var roleType = (Role) role;
+            var result = await credentialManager.CreateLoginRecordAsync(userName, password, roleType);
+            if (result.Item1 == LoginResult.BADCRIDENTIAL)
+                return Unauthorized("Wrong user name or password!");
+            if (result.Item1 == LoginResult.TOO_MUCH)
+                return BadRequest("You have too many devices logged in.");
+            return Ok(result.Item2);
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> AdminLogin(string userName, string password)
+        public async Task<IActionResult> LogOut(string token)
         {
-            var personCnt = await databases.Admins.Where(a => a.UserName == userName).CountAsync();
-            if (personCnt == 0)
-                return BadRequest("Login Failed");
-
-            var person = await databases.Admins.Where(a => a.UserName == userName).FirstAsync();
-            if (BCrypt.Net.BCrypt.EnhancedVerify(password, person.Password))
-            {
-                var body = new AdminCredential {Credential = person};
-                return Ok(body);
-            }
-
-            return BadRequest("Login Failed");
+            await credentialManager.LogOutAsync(token);
+            return Ok();
+        }
+        
+        [HttpPost("[action]")]
+        public async Task<IActionResult> LogOutAnyway(string userName)
+        {
+            await credentialManager.LogOutAnywayAsync(userName);
+            return Ok();
         }
 
         [HttpPost("[action]")]

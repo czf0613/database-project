@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SecondHand.model;
 using System.Text.Json.Serialization;
+using SecondHand.Service;
 
 namespace SecondHand
 {
@@ -26,9 +27,11 @@ namespace SecondHand
 
             services.AddDbContext<Databases>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("MainDBContext")));
-            
+
             services.AddDbContext<TokenDatabase>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("UserDBContext")));
+
+            services.AddScoped<ICredentialManager, CredentialManager>();
 
             services.AddControllers().AddJsonOptions(option =>
             {
@@ -53,10 +56,7 @@ namespace SecondHand
             app.UsePathBase("/api");
             app.UseResponseCompression();
             app.UseRouting();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

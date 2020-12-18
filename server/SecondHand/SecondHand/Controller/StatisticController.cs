@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SecondHand.model;
@@ -29,6 +30,34 @@ namespace SecondHand.controller
             };
 
             return Ok(body);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult> ListStudents(int? limit = 100)
+        {
+            var body = await databases.Students.ToListAsync();
+            return Ok(body.GetRange(0, Math.Min(body.Count, limit ?? 100)));
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult> ListCommodities(int? limit = 100)
+        {
+            var body = await databases.Commodities.ToListAsync();
+            return Ok(body.GetRange(0, Math.Min(body.Count, limit ?? 100)));
+        }
+        
+        [HttpGet("[action]")]
+        public async Task<ActionResult> ListSalesRecords(int? limit = 100)
+        {
+            var body = await databases.SalesRecords.ToListAsync();
+            return Ok(body.GetRange(0, Math.Min(body.Count, limit ?? 100)));
+        }
+        
+        [HttpGet("[action]")]
+        public async Task<ActionResult> ListAdmins(int? limit = 100)
+        {
+            var body = await databases.Admins.ToListAsync();
+            return Ok(body.GetRange(0, Math.Min(body.Count, limit ?? 100)));
         }
     }
 }

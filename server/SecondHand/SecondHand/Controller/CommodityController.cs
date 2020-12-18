@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SecondHand.model;
-using SecondHand.Model;
 
 namespace SecondHand.controller
 {
@@ -30,6 +29,14 @@ namespace SecondHand.controller
             return Ok(entity.Entity);
         }
 
+        [HttpPost("[action]")]
+        public async Task<ActionResult> Update([FromBody] Commodity commodity)
+        {
+            databases.Commodities.Update(commodity);
+            await databases.SaveChangesAsync();
+            return Ok(commodity);
+        }
+
         [HttpGet("[action]")]
         public async Task<ActionResult> Search(string query)
         {
@@ -45,28 +52,6 @@ namespace SecondHand.controller
             }
 
             return Ok(body);
-        }
-
-        [HttpPost("[action]")]
-        public async Task<ActionResult> Buy(string userName, int commodityId, [FromBody] AddressDetail addressDetail)
-        {
-            var student = databases.Students.FirstAsync(s => s.UserName == userName);
-            var commodity = await databases.Commodities.FirstAsync(c => c.Id == commodityId);
-            var record = new SalesRecord
-            {
-                Auction = commodity.Price,
-                Buyer = await student,
-                Commodity = commodity,
-                CommodityId = commodity.Id,
-                DeliveryAddress = addressDetail,
-                Seller = commodity.Seller
-            };
-            commodity.Sold = true;
-            record = (await databases.SalesRecords.AddAsync(record)).Entity;
-            commodity.SalesRecord = record;
-            await databases.SaveChangesAsync();
-
-            return Ok(record);
         }
     }
 }

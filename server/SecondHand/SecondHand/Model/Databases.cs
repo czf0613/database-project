@@ -279,9 +279,11 @@ namespace SecondHand.model
         public int Id { get; set; }
 
         public User User { get; set; }
+        
+        public DateTimeOffset Time { get; set; } = DateTimeOffset.Now;
 
-        [Required] public string Token { get; set; }
+        [Required] public string Token { get; set; } = "";
 
-        [Required] public Role Role { get; set; }
+        [Required] public Role Role { get; set; } = Role.STUDENT;
     }
 }
