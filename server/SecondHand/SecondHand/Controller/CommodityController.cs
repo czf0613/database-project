@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +36,7 @@ namespace SecondHand.controller
             databases.Commodities.Update(commodity);
             await databases.SaveChangesAsync();
             return Ok(commodity);
+            throw new NotImplementedException();
         }
 
         [HttpGet("[action]")]

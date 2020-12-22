@@ -63,7 +63,7 @@ namespace SecondHand.Service
             var loginRecord = new LoginRecord
             {
                 Role = role,
-                Token = "12345678",
+                Token = Guid.NewGuid().ToString("N"),
                 User = user
             };
             var record = tokenDatabase.LoginRecords.AddAsync(loginRecord);
@@ -91,6 +91,7 @@ namespace SecondHand.Service
             var list = tokenDatabase.LoginRecords.Where(l => l.Token == token)
                 .ToListAsync();
             tokenDatabase.LoginRecords.RemoveRange(await list);
+            await tokenDatabase.SaveChangesAsync();
         }
 
         public async Task LogOutAnywayAsync(string userName)
@@ -99,6 +100,7 @@ namespace SecondHand.Service
                 $"A dangerous method invoked: delete all login records of {userName} at {DateTimeOffset.Now}");
             var list = tokenDatabase.LoginRecords.Where(l => l.User.UserName == userName).ToListAsync();
             tokenDatabase.LoginRecords.RemoveRange(await list);
+            await tokenDatabase.SaveChangesAsync();
         }
     }
 }
