@@ -1,4 +1,5 @@
 <template>
+  <!-- view -->
   <div>
     <lottie :options="playOptions" :height="250" :width="250"/>
 
