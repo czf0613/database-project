@@ -67,5 +67,12 @@ namespace SecondHand.controller
 
             return Ok(body);
         }
+
+        [HttpGet("{commodityId}")]
+        public async Task<ActionResult> GetOne([FromRoute] int commodityId)
+        {
+            var commodity = await databases.Commodities.FirstAsync(c => c.Id == commodityId);
+            return Ok(commodity);
+        }
     }
 }
