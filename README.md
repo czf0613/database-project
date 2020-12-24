@@ -258,6 +258,426 @@ userName和password就是请求的参数。这样的参数可以提供，也可�
 
 
 
+### 9，发布商品
+
+路径：/commodity/new
+
+方法：POST
+
+参数：
+
+| 名称     | 数据类型        | 存在位置          | 是否必须提供 | 描述     |
+| -------- | --------------- | ----------------- | ------------ | -------- |
+| userName | 字符串          | request parameter | 是           | 用户名   |
+| (json)   | Commodity类对象 | request body      | 是           | 商品信息 |
+
+返回值：
+
+对应的Commodity类对象
+
+异常处理：
+
+无
+
+
+
+### 10，修改商品信息
+
+路径：/commodity/update
+
+方法：POST
+
+参数：
+
+| 名称   | 数据类型        | 存在位置     | 是否必须提供 | 描述     |
+| ------ | --------------- | ------------ | ------------ | -------- |
+| (json) | Commodity类对象 | request body | 是           | 商品信息 |
+
+返回值：
+
+对应的Commodity类对象
+
+异常处理：
+
+无
+
+
+
+### 11，删除商品
+
+路径：/commodity/delete
+
+方法：DELETE
+
+参数：
+
+| 名称        | 数据类型 | 存在位置          | 是否必须提供 | 描述   |
+| ----------- | -------- | ----------------- | ------------ | ------ |
+| commodityId | 整数     | request parameter | 是           | 商品id |
+
+返回值：
+
+对应的Commodity类对象
+
+异常处理：
+
+| 状态码 | 解释             |
+| ------ | ---------------- |
+| 400    | 该商品已经被售出 |
+
+
+
+### 12，搜索商品
+
+路径：/commodity/search
+
+方法：GET
+
+参数：
+
+| 名称  | 数据类型 | 存在位置          | 是否必须提供 | 描述         |
+| ----- | -------- | ----------------- | ------------ | ------------ |
+| query | 字符串   | request parameter | 是           | 搜索的关键字 |
+
+返回值：
+
+Commodity类对象组成的List，因为搜索结果可能有多个。
+
+异常处理：
+
+| 状态码 | 解释                           |
+| ------ | ------------------------------ |
+| 400    | 输入的关键词为空或者有非法字符 |
+
+如果没有匹配的搜索结果，返回的是空列表，不会报错
+
+
+
+### 13，查找确定的一个商品
+
+路径：/commodity/{commodityId}
+
+注意这个是路径参数，请求时不要写commodityId=xxx
+
+方法：GET
+
+参数：
+
+| 名称        | 数据类型 | 存在位置      | 是否必须提供 | 描述   |
+| ----------- | -------- | ------------- | ------------ | ------ |
+| commodityId | 整数     | path variable | 是           | 商品id |
+
+返回值：
+
+对应的Commodity类对象
+
+异常处理：
+
+无
+
+
+
+### 14，购买商品
+
+路径：/sales/buy
+
+方法：POST
+
+参数：
+
+| 名称        | 数据类型            | 存在位置          | 是否必须提供 | 描述         |
+| ----------- | ------------------- | ----------------- | ------------ | ------------ |
+| userName    | 字符串              | request parameter | 是           | 用户名       |
+| commodityId | 整数                | request parameter | 是           | 商品id       |
+| (json)      | AddressDetail类对象 | request body      | 是           | 收货地址详情 |
+
+返回值：
+
+对应SalesRecord类对象
+
+异常处理：
+
+| 状态码 | 解释     |
+| ------ | -------- |
+| 400    | 竞争购买 |
+
+
+
+### 15，确认收货
+
+路径：/sales/confirm
+
+方法：POST
+
+参数：
+
+| 名称        | 数据类型 | 存在位置          | 是否必须提供 | 描述         |
+| ----------- | -------- | ----------------- | ------------ | ------------ |
+| salesRecord | 整数     | request parameter | 是           | 销售记录的id |
+
+返回值：
+
+对应SalesRecord类对象
+
+异常处理：
+
+无。服务端会忽略重复签收的错误，不会报错。
+
+
+
+### 16，评价此次交易
+
+路径：/sales/comment
+
+方法：POST
+
+参数：
+
+| 名称        | 数据类型 | 存在位置          | 是否必须提供 | 描述         |
+| ----------- | -------- | ----------------- | ------------ | ------------ |
+| salesRecord | 整数     | request parameter | 是           | 销售记录的id |
+| comment     | 字符串   | request parameter | 是           | 评价         |
+
+返回值：
+
+对应SalesRecord类对象
+
+异常处理：
+
+| 状态码 | 解释               |
+| ------ | ------------------ |
+| 400    | 没有签收不能评价。 |
+
+如果重复提交的话，会覆盖之前的评价记录，不会报错。
+
+
+
+### 17，查看自己的交易、发布记录
+
+路径：/statistic/myCommodities
+
+方法：GET
+
+参数：
+
+| 名称     | 数据类型 | 存在位置          | 是否必须提供 | 描述   |
+| -------- | -------- | ----------------- | ------------ | ------ |
+| userName | 字符串   | request parameter | 是           | 用户名 |
+
+返回值：
+
+对应MyGoods类对象
+
+异常处理：
+
+无。如果没有相应记录的话，返回的是空列表，不会报错。
+
+
+
+### 18，列出所有学生信息
+
+路径：/statistic/listStudents
+
+方法：GET
+
+参数：
+
+| 名称  | 数据类型 | 存在位置          | 是否必须提供 | 描述                                          |
+| ----- | -------- | ----------------- | ------------ | --------------------------------------------- |
+| limit | 整数     | request parameter | 否           | 限制返回的个数，如果不提供此参数，默认为100个 |
+
+返回值：
+
+对应Student类对象组成的List
+
+异常处理：
+
+无。如果没有相应记录的话，返回的是空列表，不会报错。
+
+
+
+### 19，列出所有管理员信息
+
+路径：/statistic/listAdmins
+
+方法：GET
+
+参数：
+
+| 名称  | 数据类型 | 存在位置          | 是否必须提供 | 描述                                          |
+| ----- | -------- | ----------------- | ------------ | --------------------------------------------- |
+| limit | 整数     | request parameter | 否           | 限制返回的个数，如果不提供此参数，默认为100个 |
+
+返回值：
+
+对应Admin类对象组成的List
+
+异常处理：
+
+无。如果没有相应记录的话，返回的是空列表，不会报错。
+
+
+
+### 20，列出所有商品信息
+
+路径：/statistic/listCommodities
+
+方法：GET
+
+参数：
+
+| 名称  | 数据类型 | 存在位置          | 是否必须提供 | 描述                                          |
+| ----- | -------- | ----------------- | ------------ | --------------------------------------------- |
+| limit | 整数     | request parameter | 否           | 限制返回的个数，如果不提供此参数，默认为100个 |
+
+返回值：
+
+对应Commodity类对象组成的List
+
+异常处理：
+
+无。如果没有相应记录的话，返回的是空列表，不会报错。
+
+
+
+### 21，列出所有交易记录
+
+路径：/statistic/listSalesRecords
+
+方法：GET
+
+参数：
+
+| 名称  | 数据类型 | 存在位置          | 是否必须提供 | 描述                                          |
+| ----- | -------- | ----------------- | ------------ | --------------------------------------------- |
+| limit | 整数     | request parameter | 否           | 限制返回的个数，如果不提供此参数，默认为100个 |
+
+返回值：
+
+对应SalesRecord类对象组成的List
+
+异常处理：
+
+无。如果没有相应记录的话，返回的是空列表，不会报错。
+
+
+
+### 22，管理员修改学生信息
+
+路径：/statistic/modifyStudent
+
+方法：POST
+
+参数：
+
+| 名称   | 数据类型      | 存在位置     | 是否必须提供 | 描述     |
+| ------ | ------------- | ------------ | ------------ | -------- |
+| (json) | Student类对象 | request body | 是           | 学生信息 |
+
+返回值：
+
+对应Student类对象
+
+异常处理：
+
+无。但是，不可以修改学生用户名！
+
+
+
+### 23，删除学生
+
+路径：/statistic/deleteStudent
+
+方法：DELETE
+
+参数：
+
+| 名称  | 数据类型 | 存在位置          | 是否必须提供 | 描述   |
+| ----- | -------- | ----------------- | ------------ | ------ |
+| stuId | 整数     | request parameter | 是           | 学生id |
+
+返回值：
+
+对应的Student类对象
+
+异常处理：
+
+| 状态码 | 解释                                                         |
+| ------ | ------------------------------------------------------------ |
+| 400    | 这个学生已经发布过商品或者购买过商品，直接删除学生会引起数据丢失，删除请求被拒绝。 |
+
+
+
+### 24，删除管理员
+
+路径：/statistic/deleteAdmin
+
+方法：DELETE
+
+参数：
+
+| 名称      | 数据类型 | 存在位置          | 是否必须提供 | 描述           |
+| --------- | -------- | ----------------- | ------------ | -------------- |
+| teacherId | 整数     | request parameter | 是           | 管理员的用户id |
+
+返回值：
+
+对应的Admin类对象
+
+异常处理：
+
+无。除非删了一个本不存在的数据。
+
+
+
+### 25，删除商品
+
+路径：/statistic/deleteCommodity
+
+方法：DELETE
+
+参数：
+
+| 名称        | 数据类型 | 存在位置          | 是否必须提供 | 描述   |
+| ----------- | -------- | ----------------- | ------------ | ------ |
+| commodityId | 整数     | request parameter | 是           | 商品id |
+
+返回值：
+
+对应的Commodity类对象
+
+异常处理：
+
+无。除非删了一个本不存在的数据。
+
+注意，无论是删除商品还是删除交易记录，都会引起级联的商品和交易记录删除。也就是说，这个商品和交易记录都会跟着被删除。这是一个相当危险的操作，极其不建议进行此操作。
+
+
+
+### 26，删除交易记录
+
+路径：/statistic/deleteSalesRecord
+
+方法：DELETE
+
+参数：
+
+| 名称        | 数据类型 | 存在位置          | 是否必须提供 | 描述   |
+| ----------- | -------- | ----------------- | ------------ | ------ |
+| commodityId | 整数     | request parameter | 是           | 商品id |
+
+返回值：
+
+对应的SalesRecord类对象
+
+异常处理：
+
+无。除非删了一个本不存在的数据。
+
+注意，无论是删除商品还是删除交易记录，都会引起级联的商品和交易记录删除。也就是说，这个商品和交易记录都会跟着被删除。这是一个相当危险的操作，极其不建议进行此操作。
+
+
+
 ## 需要用到的对象
 
 ### 1，Student类
@@ -337,6 +757,58 @@ public enum Platform {
     Android,
     IPhone,
     Web
+}
+```
+
+### 6，Commodity类
+
+```c#
+public class Commodity {
+    public int Id { get; set; } //商品id
+	public string Title { get; set; } //标题，简介。限制50个字
+	public string Description { get; set; } //详细的商品描述
+	public List<string> Photos { get; set; } = new List<string>(); //图片的URL，不要把图片扔过来
+	public DateTimeOffset ReleaseTime { get; set; } = DateTimeOffset.Now; //发布时间
+	public decimal Price { get; set; } = 0.0M; //价格，可以为小数
+	public Student Seller { get; set; } //发布商品的那个学生，注意如果是发布商品的时候，这个值可以不写
+}
+```
+
+### 7，AddressDetail类
+
+```c#
+//之所以要设置这个类，是因为用户的信息和收件人的信息不一定一致
+public class AddressDetail {
+    public string Name { get; set; } //收件人姓名
+    public string Address { get; set; } //收件人地址
+    public string Phone { get; set; } //收件人电话
+}
+```
+
+### 8，SalesRecord类
+
+```c#
+public class SalesRecord {
+    public int Id { get; set; } //销售记录id
+	public int CommodityId { get; set; } //对应的商品id
+	public Commodity Commodity { get; set; } //商品实体
+	public Student Seller { get; set; } //卖家
+	public Student Buyer { get; set; } //买家
+	public AddressDetail DeliveryAddress { get; set; } //收货地址
+	public string? Comment { get; set; } //交易评价。如果用户没有评价的话，这个字段不会出现在json字符串中
+	public DateTimeOffset TransactionTime { get; set; } = DateTimeOffset.Now; //交易时间
+	public decimal Auction { get; set; } //成交价，可以写小数
+	public bool Check { get; set; } //是否签收？
+}
+```
+
+### 9，MyGoods类
+
+```c#
+public class MyGoods {
+    public List<Commodity> AllMyCommodities { get; set; } = new List<Commodity>(); //我发布的
+	public List<SalesRecord> Sold { get; set; } = new List<SalesRecord>(); //我卖出去的
+	public List<SalesRecord> Bought { get; set; } = new List<SalesRecord>(); //我买到的，过滤一下其中的check字段即可得到已付款但未签收的商品
 }
 ```
 
