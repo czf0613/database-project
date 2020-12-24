@@ -53,13 +53,6 @@ namespace SecondHand.model
                 .HasOne(e => e.Buyer)
                 .WithMany(s => s.Bought);
 
-            modelBuilder.Entity<User>()
-                .Property(e => e.Gender)
-                .HasConversion(
-                    v => v.ToString(),
-                    v => (Gender) Enum.Parse(typeof(Gender), v)
-                );
-
             var objectComparator = new ValueComparer<AddressDetail>(
                 (c1, c2) => c1.Equals(c2),
                 c => c.GetHashCode(),
@@ -235,6 +228,7 @@ namespace SecondHand.model
         public int Id { get; set; }
 
         public int CommodityId { get; set; }
+
         public Commodity Commodity { get; set; }
 
         [Required] public Student Seller { get; set; }
@@ -249,7 +243,7 @@ namespace SecondHand.model
 
         [Required] public decimal Auction { get; set; }
 
-        public bool Check { get; set; } = false;
+        public bool Check { get; set; }
     }
 
     public class TokenDatabase : DbContext
