@@ -243,9 +243,11 @@ namespace SecondHand.model
 
         [Required] public AddressDetail DeliveryAddress { get; set; }
 
+        public string? Comment { get; set; }
+
         [Required] public DateTimeOffset TransactionTime { get; set; } = DateTimeOffset.Now;
 
-        [Required] public decimal Auction { get; set; } = 0.0M;
+        [Required] public decimal Auction { get; set; }
 
         public bool Check { get; set; } = false;
     }
@@ -279,7 +281,7 @@ namespace SecondHand.model
         public int Id { get; set; }
 
         public User User { get; set; }
-        
+
         public DateTimeOffset Time { get; set; } = DateTimeOffset.Now;
 
         [Required] public string Token { get; set; } = "";
