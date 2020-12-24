@@ -48,5 +48,25 @@ namespace SecondHand.controller
                 return BadRequest("This commodity is bought by others.");
             }
         }
+
+        [HttpPost("[action]")]
+        public async Task<ActionResult> Confirm(int salesRecord)
+        {
+            var record = await databases.SalesRecords.FirstAsync(s => s.Id == salesRecord);
+            record.Check = true;
+            await databases.SaveChangesAsync();
+            return Ok(record);
+        }
+
+        [HttpPost("[action]")]
+        public async Task<ActionResult> Comment(int salesRecord, string comment)
+        {
+            var record = await databases.SalesRecords.FirstAsync(s => s.Id == salesRecord);
+            if (!record.Check)
+                return BadRequest("You can not comment before confirming receipt");
+            record.Comment = comment;
+            await databases.SaveChangesAsync();
+            return Ok(record);
+        }
     }
 }
