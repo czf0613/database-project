@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using SecondHand.model;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using SecondHand.Service;
 
 namespace SecondHand.controller
@@ -144,9 +146,11 @@ namespace SecondHand.controller
         }
 
         [Route("/error")]
-        public IActionResult Error()
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public string Error()
         {
-            return BadRequest("Something Wrong Happened");
+            return "Something Wrong Happened";
         }
     }
 }
