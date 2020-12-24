@@ -39,6 +39,18 @@ namespace SecondHand.controller
             throw new NotImplementedException();
         }
 
+        [HttpDelete("[action]")]
+        public async Task<ActionResult> Delete(int commodityId)
+        {
+            var commodity = await databases.Commodities.FirstAsync(c => c.Id == commodityId);
+            if (commodity.Sold)
+                return BadRequest("Item has been sold!");
+
+            databases.Commodities.Remove(commodity);
+            await databases.SaveChangesAsync();
+            return Ok(commodity);
+        }
+
         [HttpGet("[action]")]
         public async Task<ActionResult> Search(string query)
         {

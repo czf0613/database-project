@@ -32,6 +32,7 @@ namespace SecondHand
                 options.UseSqlite(Configuration.GetConnectionString("UserDBContext")));
 
             services.AddScoped<ICredentialManager, CredentialManager>();
+            services.AddScoped<ICommodityManager, CommodityManager>();
 
             services.AddControllers().AddJsonOptions(option =>
             {
