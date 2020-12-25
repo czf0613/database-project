@@ -30,7 +30,7 @@ It is very convenient and reduce the mistakes when you are dealing with the raw 
 
 Once we have ORM, it is easy for us to understand what is code first design pattern, since the entity classes can be defined in a program, obviously we can generate the database model based on the code. For example, we defined the User entity in our program, we can map it to the database automatically, without typing any SQL commands, just as follows:
 
-![image-20201226043358238](C:\Users\13540\AppData\Roaming\Typora\typora-user-images\image-20201226043358238.png)
+![image-20201226043358238](https://pic-bed.xyz/res/userFiles/czf/149.png)
 
 ![image-20201226031846828](https://pic-bed.xyz/res/userFiles/czf/142.png)
 
