@@ -22,6 +22,7 @@ const router = new VueRouter({
         component: LoginPage
     }, {
         path: '/home',
+        name: 'home',
         component: HomePage
     }, {
         path: '*',
@@ -44,7 +45,7 @@ router.beforeEach((to, from, next) => {
 })
 
 function checkLogin() {
-    return false
+    return localStorage.getItem('login') != null
 }
 
 new Vue({
