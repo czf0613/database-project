@@ -30,6 +30,7 @@ const router = new VueRouter({
     }]
 })
 
+
 router.beforeEach((to, from, next) => {
     if (to.path === '/login') {
         if (checkLogin())
@@ -42,7 +43,10 @@ router.beforeEach((to, from, next) => {
         else
             next("/login")
     }
+
 })
+
+
 
 function checkLogin() {
     return localStorage.getItem('login') != null
