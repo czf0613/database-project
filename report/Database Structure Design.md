@@ -36,7 +36,7 @@ According to the request, we make up entities as follows, I will introduce what 
 
 ![image-20201226031846828](https://pic-bed.xyz/res/userFiles/czf/142.png)
 
-because of the inheritance between User, Student, Administrator, we end up putting all the attributes in one tale called User, and controls the inheritance by the attibute `Discriminator`, in this way, we successfully handled our inheritance in database.
+because of the inheritance between User, Student, Administrator, we end up putting all the attributes in one tale called User, and controls the inheritance by the attribute `Discriminator`, in this way, we successfully handled our inheritance in database.
 
 
 
