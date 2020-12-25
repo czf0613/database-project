@@ -101,8 +101,9 @@ namespace SecondHand.model
         public int Id { get; set; }
 
         [Required] [StringLength(30)] public string UserName { get; set; } = "default";
-
-        [Required] [JsonIgnore] public string Password { get; set; } = "";
+        
+        [JsonIgnore] 
+        public string Password { get; set; } = "";
 
         [Required] public string IconURL { get; set; } = "https://pic-bed.xyz/res/icons/default.png";
 

@@ -36,7 +36,6 @@ namespace SecondHand.controller
             databases.Commodities.Update(commodity);
             await databases.SaveChangesAsync();
             return Ok(commodity);
-            throw new NotImplementedException();
         }
 
         [HttpDelete("[action]")]
@@ -54,6 +53,8 @@ namespace SecondHand.controller
         [HttpGet("[action]")]
         public async Task<ActionResult> Search(string query)
         {
+            if (query.Length == 0)
+                return BadRequest("Bad keywords!");
             var keyWords = query.Split(" ");
             var body = new HashSet<Commodity>();
 

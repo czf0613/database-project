@@ -22,7 +22,8 @@ namespace SecondHand.controller
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> SignUp(string userName, string password, [FromBody] Student student)
+        public async Task<IActionResult> SignUp(string userName, string password,
+            [FromBody] Student student)
         {
             var countUserName = databases.Users.Where(s => s.UserName == userName).CountAsync();
             var countPhone = databases.Users.Where(s => s.Phone == student.Phone).CountAsync();

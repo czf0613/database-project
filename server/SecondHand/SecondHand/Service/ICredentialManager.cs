@@ -56,7 +56,7 @@ namespace SecondHand.Service
 
             if (await records >= 5)
                 return new ValueTuple<LoginResult, IdentityCredential>(LoginResult.TOO_MUCH, null);
-
+            
             if (!BCrypt.Net.BCrypt.EnhancedVerify(password, user.Password))
                 return new ValueTuple<LoginResult, IdentityCredential>(LoginResult.BADCRIDENTIAL, null);
 
@@ -66,12 +66,12 @@ namespace SecondHand.Service
                 Token = Guid.NewGuid().ToString("N"),
                 User = user
             };
-            var record = tokenDatabase.LoginRecords.AddAsync(loginRecord);
+            //var record = tokenDatabase.LoginRecords.AddAsync(loginRecord);
 
             var credential = new IdentityCredential
             {
-                ExpireDate = (await record).Entity.Time.AddDays(15),
-                Token = (await record).Entity.Token
+                ExpireDate = loginRecord.Time.AddDays(15),
+                Token = loginRecord.Token
             };
             if (role == Role.STUDENT)
             {
@@ -82,7 +82,7 @@ namespace SecondHand.Service
                 credential.Credential = await databases.Admins.FirstAsync(a => a.UserName == userName);
             }
 
-            await tokenDatabase.SaveChangesAsync();
+            //await tokenDatabase.SaveChangesAsync();
             return new ValueTuple<LoginResult, IdentityCredential>(LoginResult.SUCCESS, credential);
         }
 

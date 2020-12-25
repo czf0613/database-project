@@ -37,8 +37,6 @@ namespace SecondHand
             services.AddControllers().AddJsonOptions(option =>
             {
                 option.JsonSerializerOptions.AllowTrailingCommas = false;
-                option.JsonSerializerOptions.WriteIndented = true;
-                option.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             });
         }
 

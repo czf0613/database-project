@@ -12,15 +12,19 @@ namespace SecondHand
                 .Run();
         }
 
-        
+
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
-                    .UseUrls("http://*:12138")
-                    .UseKestrel()
-                    .UseStartup<Startup>();
+                        .UseUrls("http://*:12138")
+                        .UseKestrel(option =>
+                        {
+                            option.Limits.MinRequestBodyDataRate = null;
+                            option.Limits.MaxRequestBodySize = null;
+                        })
+                        .UseStartup<Startup>();
                 });
     }
 }
