@@ -18,7 +18,7 @@ namespace SecondHand
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
-                        .UseUrls("http://*:12138")
+                        .UseUrls("http://*:12306")
                         .UseKestrel(option =>
                         {
                             option.Limits.MinRequestBodyDataRate = null;

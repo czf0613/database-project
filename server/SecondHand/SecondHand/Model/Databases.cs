@@ -19,6 +19,8 @@ namespace SecondHand.model
         public DbSet<Commodity> Commodities { get; set; }
         public DbSet<SalesRecord> SalesRecords { get; set; }
 
+        public DbSet<LoginRecord> LoginRecords { get; set; }
+
         public Databases(DbContextOptions<Databases> options) : base(options)
         {
         }
@@ -82,6 +84,14 @@ namespace SecondHand.model
                 .WithOne(s => s.Commodity)
                 .HasForeignKey<SalesRecord>(s => s.CommodityId);
 
+            modelBuilder.Entity<LoginRecord>()
+                .HasIndex(l => l.Token)
+                .IsUnique();
+
+            modelBuilder.Entity<LoginRecord>()
+                .HasOne(l => l.User)
+                .WithMany(u => u.LoginRecords);
+
             Console.WriteLine("Database Migration Success");
         }
     }
@@ -101,9 +111,8 @@ namespace SecondHand.model
         public int Id { get; set; }
 
         [Required] [StringLength(30)] public string UserName { get; set; } = "default";
-        
-        [JsonIgnore] 
-        public string Password { get; set; } = "";
+
+        [JsonIgnore] public string Password { get; set; } = "";
 
         [Required] public string IconURL { get; set; } = "https://pic-bed.xyz/res/icons/default.png";
 
@@ -147,6 +156,8 @@ namespace SecondHand.model
                 return gap;
             }
         }
+
+        [JsonIgnore] public List<LoginRecord> LoginRecords { get; set; } = new List<LoginRecord>();
 
         public override bool Equals(object obj)
         {
@@ -247,28 +258,6 @@ namespace SecondHand.model
         public bool Check { get; set; }
     }
 
-    public class TokenDatabase : DbContext
-    {
-        public DbSet<LoginRecord> LoginRecords { get; set; }
-
-        public TokenDatabase(DbContextOptions options) : base(options)
-        {
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<LoginRecord>()
-                .HasIndex(l => l.Token)
-                .IsUnique();
-        }
-    }
-
-    public enum Role
-    {
-        STUDENT,
-        ADMIN
-    }
-
     public class LoginRecord
     {
         [Key]
@@ -282,5 +271,11 @@ namespace SecondHand.model
         [Required] public string Token { get; set; } = "";
 
         [Required] public Role Role { get; set; } = Role.STUDENT;
+    }
+
+    public enum Role
+    {
+        STUDENT,
+        ADMIN
     }
 }
