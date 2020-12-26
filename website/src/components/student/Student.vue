@@ -14,7 +14,7 @@
       </el-col>
     </el-header>
 
-    <el-aside style="background-color: rgb(238, 241, 246)">
+    <el-aside style="background-color: rgb(238,241,246)">
       <el-menu default-active="1" @select="onMenuItemSelected">
         <el-menu-item index="1">
           <template slot="title"><i class="el-icon-message"></i>商城</template>
@@ -23,9 +23,9 @@
         <el-submenu index="2">
           <template slot="title"><i class="el-icon-message"></i>我的商品</template>
           <el-menu-item-group>
-            <el-menu-item index="2-1">我发布的</el-menu-item>
-            <el-menu-item index="2-2">我卖出的</el-menu-item>
-            <el-menu-item index="2-3">我买到的</el-menu-item>
+            <el-menu-item index="2-1" @click="searchMyAdd">我发布的</el-menu-item>
+            <el-menu-item index="2-2" @click="searchMySold">我卖出的</el-menu-item>
+            <el-menu-item index="2-3" @click="searchMyBought">我买到的</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
 
@@ -48,15 +48,15 @@
       </div>
 
       <div v-else-if="index==='2-1'">
-
+        <Commodity v-for="item in allMyCommodities" :allMyCommodities="item" :key="item.id"/>
       </div>
 
       <div v-else-if="index==='2-2'">
-
+        <SalesRecord v-for="item in sold" :sold="item" :key="item.id"/>
       </div>
 
       <div v-else-if="index==='2-3'">
-
+        <SalesRecord v-for="item in bought" :bought ="item" :key="item.id"/>
       </div>
 
       <div v-else-if="index==='3-1'">
@@ -69,19 +69,25 @@
 <script>
 import Commodity from "@/components/commodity/Commodity";
 import ReleaseNewOne from "@/components/commodity/ReleaseNewOne";
+import SalesRecord from "@/components/commodity/SalesRecord";
 
 export default {
   name: "Student",
   components: {
     Commodity,
-    ReleaseNewOne
+    ReleaseNewOne,
+    SalesRecord
   },
   data() {
     return {
       commodities: [],
+      allMyCommodities:[],
+      sold:[],
+      bought:[],
       searchKey: '',
       addingCommodity: false,
-      index: '1'
+      index: '1',
+      userName: localStorage.getItem('userName')
     }
   },
   methods: {
@@ -93,6 +99,36 @@ export default {
           .then(response => {
             this.commodities = response.data
             console.log(this.commodities)
+          })
+          .catch(error => {
+            console.log(error)
+          })
+    },
+    searchMyAdd() {
+      this.GLOBAL.fly.get(`${this.GLOBAL.domain}/statistic/myCommodities?username=${this.userName}`)
+          .then(response => {
+            this.allMyCommodities = response.data.allMyCommodities
+            console.log(this.allMyCommodities)
+          })
+          .catch(error => {
+            console.log(error)
+          })
+    },
+    searchMySold() {
+      this.GLOBAL.fly.get(`${this.GLOBAL.domain}/statistic/myCommodities?username=${this.userName}`)
+          .then(response => {
+            this.sold = response.data.sold
+            console.log(this.sold)
+          })
+          .catch(error => {
+            console.log(error)
+          })
+    },
+    searchMyBought() {
+      this.GLOBAL.fly.get(`${this.GLOBAL.domain}/statistic/myCommodities?username=${this.userName}`)
+          .then(response => {
+            this.bought = response.data.bought
+            console.log(this.bought)
           })
           .catch(error => {
             console.log(error)
