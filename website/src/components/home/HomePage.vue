@@ -24,13 +24,13 @@
       <el-form ref="form" :model="changePassInformation" label-width="100px" class="right">
 
         <el-form-item label="旧密码">
-          <el-input v-model="changePassInformation.oldPassword" placeholder="请输入旧密码"></el-input>
+          <el-input v-model="changePassInformation.oldPassword" show-password placeholder="请输入旧密码"></el-input>
         </el-form-item>
         <el-form-item label="新密码">
-          <el-input v-model="changePassInformation.newPassword" placeholder="请输入新密码"></el-input>
+          <el-input v-model="changePassInformation.newPassword" show-password placeholder="请输入新密码"></el-input>
         </el-form-item>
         <el-form-item label="再一次">
-          <el-input v-model="passWordagain" placeholder="请再输入一次新密码"></el-input>
+          <el-input v-model="passWordagain" show-password placeholder="请再输入一次新密码"></el-input>
         </el-form-item>
       </el-form>
 
@@ -165,11 +165,10 @@ export default {
     },
     confirmInformation() {
       let url = this.GLOBAL.domain
-      if (this.page === 0){
+      if (this.page === 0) {
         url += `/self`
         this.changeInfor.role = 0
-      }
-      else if (this.page === 1) {
+      } else if (this.page === 1) {
         url += `/adminSelf`
         this.changeInfor.role = 1
       }
@@ -189,19 +188,19 @@ export default {
             console.log(error)
             alert("修改失败")
           })
+    },
+    changeInformation() {
+      this.changeInforOrNot = !this.changeInforOrNot
+      this.dialogFormVisible = true
     }
   },
-  changeInformation() {
-    this.changeInforOrNot = !this.changeInforOrNot
-    this.dialogFormVisible = true
-  },
-  created() {
-    this.page = this.$route.params.page
-    if (this.page === undefined)
-      this.page = parseInt(localStorage.getItem('page'))
-    else
-      localStorage.setItem('page', `${this.page}`)
-  }
+    created() {
+      this.page = this.$route.params.page
+      if (this.page === undefined)
+        this.page = parseInt(localStorage.getItem('page'))
+      else
+        localStorage.setItem('page', `${this.page}`)
+    }
 }
 </script>
 

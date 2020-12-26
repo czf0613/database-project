@@ -29,7 +29,7 @@
           </el-menu-item-group>
         </el-submenu>
 
-        <el-submenu index="3">
+        <el-submenu index="3" >
           <template slot="title"><i class="el-icon-message"></i>个人信息</template>
           <el-menu-item-group>
             <el-menu-item index="3-1">修改个人信息</el-menu-item>
@@ -41,14 +41,14 @@
     <el-main>
       <div v-if="index==='1'">
         <div v-if="!addingCommodity">
-          <Commodity v-for="item in commodities" :commodity="item" :key="item.id"/>
+          <Commodity v-for="item in commodities" :commodity="item" :judge="{add:false}" :key="item.id"/>
         </div>
 
         <ReleaseNewOne v-if="addingCommodity"/>
       </div>
 
       <div v-if="index==='2-1'">
-        <Commodity v-for="item in allMyCommodities" :allMyCommodities="item" :key="item.id"/>
+        <Commodity v-for="item in allMyCommodities" :commodity="item" :judge="{add:true}" :key="item.id"/>
       </div>
 
       <div v-else-if="index==='2-2'">
@@ -98,7 +98,7 @@ export default {
       this.GLOBAL.fly.get(`${this.GLOBAL.domain}/commodity/search?query=${this.searchKey}`)
           .then(response => {
             this.commodities = response.data
-            console.log(this.commodities)
+            console.log(response)
           })
           .catch(error => {
             console.log(error)
@@ -108,7 +108,7 @@ export default {
       this.GLOBAL.fly.get(`${this.GLOBAL.domain}/statistic/myCommodities?username=${this.userName}`)
           .then(response => {
             this.allMyCommodities = response.data.allMyCommodities
-            console.log(this.allMyCommodities)
+            console.log(response)
           })
           .catch(error => {
             console.log(error)
@@ -118,7 +118,7 @@ export default {
       this.GLOBAL.fly.get(`${this.GLOBAL.domain}/statistic/myCommodities?username=${this.userName}`)
           .then(response => {
             this.sold = response.data.sold
-            console.log(this.sold)
+            console.log(response)
           })
           .catch(error => {
             console.log(error)
@@ -128,7 +128,7 @@ export default {
       this.GLOBAL.fly.get(`${this.GLOBAL.domain}/statistic/myCommodities?username=${this.userName}`)
           .then(response => {
             this.bought = response.data.bought
-            console.log(this.bought)
+            console.log(response)
           })
           .catch(error => {
             console.log(error)
