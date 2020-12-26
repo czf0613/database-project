@@ -1,24 +1,24 @@
 <template>
   <div class="center">
-    <el-image
-        fit="contain"
-        lazy :src="url" style="max-width: 300px; max-height: 300px" alt="图片">
-      <img src="../../assets/loading.jpg" slot="placeholder" alt="加载中">
-      <img src="../../assets/error.png" slot="error" alt="加载失败">
-    </el-image>
+    <div class="align">
+      <el-image v-for="url in commodity.photos" lazy :src="url" :key="url">
+        <div slot="placeholder" class="image-slot">
+          加载中<span class="dot">...</span>
+        </div>
 
-    <el-divider/>
+        <div>
+          div slot="error" class="image-slot">
+          <i class="el-icon-picture-outline"></i>
+        </div>
+      </el-image>
+    </div>
 
-    <el-row class="align">
-      <el-col :span="10"><p>文件名：{{ fileName }}</p></el-col>
+    <p>商品名称：{{ commodity.title }}</p>
+    <p>商品描述：{{ commodity.description }}</p>
+    <p>价格：{{ commodity.price }}</p>
+    <el-button type="warning" @click="displayBuy=true">购买</el-button>
 
-      <el-divider direction="vertical"/>
-      <el-button type="danger" @click="displayBuy=true">购买</el-button>
-      <el-divider direction="vertical"/>
-
-    </el-row>
-
-    <el-dialog v-if="displayBuy===true" title="购买商品" :visible.sync="displayBuy">
+    <el-dialog title="购买商品" :visible.sync="displayBuy">
 
       <el-form ref="form" :model="addressDetail" label-width="100px" class="right">
         <el-form-item label="收件人姓名">
@@ -36,47 +36,39 @@
         <el-button @click="displayBuy = false">取 消</el-button>
         <el-button type="danger" @click="buy">确认购买</el-button>
       </div>
-
     </el-dialog>
-    <br>
-
-    <p>图片URL：{{ url }}</p>
   </div>
 </template>
 
 <script>
-import Student from "@/components/student/Student";
 export default {
-  name: "commodity",
+  name: "Commodity",
   props: {
-    url: String,
-    fileName: String,
-    deleteCallBack: Function
+    commodity: {
+      id: 0,
+      title: '',
+      description: '',
+      photos: [],
+      releaseTime: '',
+      price: 0.0
+    }
   },
-  data(){
-    return{
-      displayBuy:false,
-      commodity:{
-        id:0,
-        title:'',
-        description:'',
-//没写list url那个
-        releaseTime:DateTimeOffset.Now,
-        price:0.0,
-        seller:Student//不确定这样是不是正确的
-      },
+  data() {
+    return {
+      displayBuy: false,
       addressDetail: {
         name: '',
         address: '',
         phone: ''
-      }
+      },
+      userName: localStorage.getItem('userName')
     }
   },
-  methods:{
+  methods: {
     buy() {
       this.displayBuy = !this.displayBuy
       let url = this.GLOBAL.domain
-      url += `/sales/buy?userName=${this.userName}&commodityId=${this.commodityId}`
+      url += `/sales/buy?userName=${this.userName}&commodityId=${this.commodity.id}`
       this.GLOBAL.fly.post(url, this.addressDetail)
           .then(response => {
             console.log(response)
@@ -99,7 +91,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  margin-top: 100px;
+  margin-top: 60px;
   text-align: center;
   justify-content: center;
   flex-direction: column;

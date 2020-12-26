@@ -54,7 +54,7 @@ export default {
     return {
       page: 0,
       changePassOrNot: false,
-      dialogFormVisible:false,
+      dialogFormVisible: false,
       passWordagain: '',
       changeInformation: {
         userName: localStorage.getItem('userName'),
@@ -70,10 +70,10 @@ export default {
     },
     changePassword() {
       this.changePassOrNot = !this.changePassOrNot
-      this.dialogFormVisible=true
+      this.dialogFormVisible = true
     },
     confirmPassword() {
-      if (this.changeInformation.newPassword != this.passWordagain) {
+      if (this.changeInformation.newPassword !== this.passWordagain) {
         alert('两次密码输入不一致')
         return
       }
@@ -92,8 +92,12 @@ export default {
           })
     }
   },
-  mounted() {
+  created() {
     this.page = this.$route.params.page
+    if (this.page === undefined)
+      this.page = parseInt(localStorage.getItem('page'))
+    else
+      localStorage.setItem('page', `${this.page}`)
   }
 }
 </script>

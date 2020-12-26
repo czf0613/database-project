@@ -32,7 +32,7 @@
         </el-col>
 
         <el-col :span="3">
-          <el-button type="primary" style="width: 150px" @click="login">登录</el-button>
+          <el-button type="primary" style="width: 150px" @click="login" @keydown="login">登录</el-button>
         </el-col>
       </el-row>
     </div>
@@ -160,7 +160,8 @@ export default {
       this.GLOBAL.fly.post(`${this.GLOBAL.domain}/login?userName=${this.loginFormData.userName}&password=${this.loginFormData.password}&role=${this.loginFormData.role}`)
           .then(response => {
             localStorage.setItem('userName', response.data.credential.userName)
-            localStorage.setItem('login', 'true')
+            localStorage.setItem('userId', response.data.credential.id)
+            localStorage.setItem('token', response.data.token)
             this.$router.replace({name: "home", params: {page: this.loginFormData.role}})
           })
           .catch(error => {

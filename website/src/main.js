@@ -47,9 +47,8 @@ router.beforeEach((to, from, next) => {
 })
 
 
-
 function checkLogin() {
-    return localStorage.getItem('login') != null
+    return localStorage.getItem('token') != null
 }
 
 new Vue({
