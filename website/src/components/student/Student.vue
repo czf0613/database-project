@@ -139,7 +139,6 @@ export default {
     },
     onMenuItemSelected(index) {
       this.index = index
-
     }
   }
 }
