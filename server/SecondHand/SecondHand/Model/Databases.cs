@@ -221,7 +221,7 @@ namespace SecondHand.model
 
         [Required] public decimal Price { get; set; } = 0.0M;
 
-        [Required] public Student Seller { get; set; }
+        public Student Seller { get; set; }
 
         [ConcurrencyCheck] [JsonIgnore] public bool Sold { get; set; }
 
