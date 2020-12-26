@@ -56,7 +56,7 @@
       </div>
 
       <div v-else-if="index==='2-3'">
-        <SalesRecord v-for="item in bought" :bought ="item" :key="item.id"/>
+        <SalesRecord v-for="item in bought" :bought="item" :key="item.id"/>
       </div>
 
       <div v-else-if="index==='3-1'">
@@ -81,9 +81,9 @@ export default {
   data() {
     return {
       commodities: [],
-      allMyCommodities:[],
-      sold:[],
-      bought:[],
+      allMyCommodities: [],
+      sold: [],
+      bought: [],
       searchKey: '',
       addingCommodity: false,
       index: '1',
@@ -139,6 +139,7 @@ export default {
     },
     onMenuItemSelected(index) {
       this.index = index
+
     }
   }
 }
