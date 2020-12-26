@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -37,9 +38,23 @@ namespace SecondHand.controller
             return Ok(commodity);
         }
 
+        [HttpDelete("[action]")]
+        public async Task<ActionResult> Delete(int commodityId)
+        {
+            var commodity = await databases.Commodities.FirstAsync(c => c.Id == commodityId);
+            if (commodity.Sold)
+                return BadRequest("Item has been sold!");
+
+            databases.Commodities.Remove(commodity);
+            await databases.SaveChangesAsync();
+            return Ok(commodity);
+        }
+
         [HttpGet("[action]")]
         public async Task<ActionResult> Search(string query)
         {
+            if (query.Length == 0)
+                return BadRequest("Bad keywords!");
             var keyWords = query.Split(" ");
             var body = new HashSet<Commodity>();
 
@@ -52,6 +67,13 @@ namespace SecondHand.controller
             }
 
             return Ok(body);
+        }
+
+        [HttpGet("{commodityId}")]
+        public async Task<ActionResult> GetOne([FromRoute] int commodityId)
+        {
+            var commodity = await databases.Commodities.FirstAsync(c => c.Id == commodityId);
+            return Ok(commodity);
         }
     }
 }

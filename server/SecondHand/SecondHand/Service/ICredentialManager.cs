@@ -28,18 +28,16 @@ namespace SecondHand.Service
 
     public class CredentialManager : ICredentialManager
     {
-        private readonly TokenDatabase tokenDatabase;
         private readonly Databases databases;
 
-        public CredentialManager(TokenDatabase tokenDatabase, Databases databases)
+        public CredentialManager(Databases databases)
         {
-            this.tokenDatabase = tokenDatabase;
             this.databases = databases;
         }
 
         public async Task<bool> CheckTokenAsync(User user, string token)
         {
-            var cnt = tokenDatabase.LoginRecords.CountAsync(l => l.User.Equals(user) && l.Token == token);
+            var cnt = databases.LoginRecords.CountAsync(l => l.User.Equals(user) && l.Token == token);
             if (await cnt == 0)
                 return false;
             return true;
@@ -50,7 +48,7 @@ namespace SecondHand.Service
         {
             var cnt = await databases.Users.CountAsync(u => u.UserName == userName);
             var user = await databases.Users.FirstAsync(u => u.UserName == userName);
-            var records = tokenDatabase.LoginRecords.CountAsync(l => l.User.Equals(user));
+            var records = databases.LoginRecords.CountAsync(l => l.User.Equals(user));
             if (cnt == 0)
                 return new ValueTuple<LoginResult, IdentityCredential>(LoginResult.BADCRIDENTIAL, null);
 
@@ -63,15 +61,15 @@ namespace SecondHand.Service
             var loginRecord = new LoginRecord
             {
                 Role = role,
-                Token = "12345678",
+                Token = Guid.NewGuid().ToString("N"),
                 User = user
             };
-            var record = tokenDatabase.LoginRecords.AddAsync(loginRecord);
+            var record = databases.LoginRecords.AddAsync(loginRecord);
 
             var credential = new IdentityCredential
             {
-                ExpireDate = (await record).Entity.Time.AddDays(15),
-                Token = (await record).Entity.Token
+                ExpireDate = loginRecord.Time.AddDays(15),
+                Token = loginRecord.Token
             };
             if (role == Role.STUDENT)
             {
@@ -82,23 +80,25 @@ namespace SecondHand.Service
                 credential.Credential = await databases.Admins.FirstAsync(a => a.UserName == userName);
             }
 
-            await tokenDatabase.SaveChangesAsync();
+            await databases.SaveChangesAsync();
             return new ValueTuple<LoginResult, IdentityCredential>(LoginResult.SUCCESS, credential);
         }
 
         public async Task LogOutAsync(string token)
         {
-            var list = tokenDatabase.LoginRecords.Where(l => l.Token == token)
+            var list = databases.LoginRecords.Where(l => l.Token == token)
                 .ToListAsync();
-            tokenDatabase.LoginRecords.RemoveRange(await list);
+            databases.LoginRecords.RemoveRange(await list);
+            await databases.SaveChangesAsync();
         }
 
         public async Task LogOutAnywayAsync(string userName)
         {
             Console.WriteLine(
                 $"A dangerous method invoked: delete all login records of {userName} at {DateTimeOffset.Now}");
-            var list = tokenDatabase.LoginRecords.Where(l => l.User.UserName == userName).ToListAsync();
-            tokenDatabase.LoginRecords.RemoveRange(await list);
+            var list = databases.LoginRecords.Where(l => l.User.UserName == userName).ToListAsync();
+            databases.LoginRecords.RemoveRange(await list);
+            await databases.SaveChangesAsync();
         }
     }
 }

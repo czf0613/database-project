@@ -3,7 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using SecondHand.model;
 using System.Linq;
 using System.Threading.Tasks;
-using SecondHand.Model;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using SecondHand.Service;
 
 namespace SecondHand.controller
@@ -21,7 +22,8 @@ namespace SecondHand.controller
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> SignUp(string userName, string password, [FromBody] Student student)
+        public async Task<IActionResult> SignUp(string userName, string password,
+            [FromBody] Student student)
         {
             var countUserName = databases.Users.Where(s => s.UserName == userName).CountAsync();
             var countPhone = databases.Users.Where(s => s.Phone == student.Phone).CountAsync();
@@ -77,7 +79,7 @@ namespace SecondHand.controller
             await credentialManager.LogOutAsync(token);
             return Ok();
         }
-        
+
         [HttpPost("[action]")]
         public async Task<IActionResult> LogOutAnyway(string userName)
         {
@@ -131,9 +133,9 @@ namespace SecondHand.controller
         {
             var personCnt = await databases.Users.Where(u => u.UserName == userName).CountAsync();
             if (personCnt == 0)
-                return BadRequest("Change Password Failed");
+                return BadRequest("No such person!");
 
-            var person = databases.Users.First(u => u.UserName == userName);
+            var person = await databases.Users.FirstAsync(u => u.UserName == userName);
             if (BCrypt.Net.BCrypt.EnhancedVerify(oldPassword, person.Password))
             {
                 person.Password = BCrypt.Net.BCrypt.EnhancedHashPassword(newPassword);
@@ -141,13 +143,15 @@ namespace SecondHand.controller
                 return Ok("Change Password Success");
             }
 
-            return BadRequest("Change Password Failed");
+            return BadRequest("Bad Credential");
         }
 
         [Route("/error")]
-        public IActionResult Error()
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public string Error()
         {
-            return BadRequest("Something Wrong Happened");
+            return "Something Wrong Happened";
         }
     }
 }

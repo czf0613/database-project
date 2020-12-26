@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -5,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SecondHand.model;
-using System.Text.Json.Serialization;
 using SecondHand.Service;
 
 namespace SecondHand
@@ -28,15 +28,12 @@ namespace SecondHand
             services.AddDbContext<Databases>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("MainDBContext")));
 
-            services.AddDbContext<TokenDatabase>(options =>
-                options.UseSqlite(Configuration.GetConnectionString("UserDBContext")));
-
             services.AddScoped<ICredentialManager, CredentialManager>();
+            services.AddScoped<ICommodityManager, CommodityManager>();
 
             services.AddControllers().AddJsonOptions(option =>
             {
                 option.JsonSerializerOptions.AllowTrailingCommas = false;
-                option.JsonSerializerOptions.WriteIndented = true;
                 option.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             });
         }
