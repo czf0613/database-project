@@ -47,7 +47,7 @@
         <ReleaseNewOne v-if="addingCommodity"/>
       </div>
 
-      <div v-else-if="index==='2-1'">
+      <div v-if="index==='2-1'">
         <Commodity v-for="item in allMyCommodities" :allMyCommodities="item" :key="item.id"/>
       </div>
 

@@ -72,7 +72,7 @@ export default {
       this.GLOBAL.fly.post(url, this.addressDetail)
           .then(response => {
             console.log(response)
-            //返回SalesRecords对象该怎么使用？？
+            //返回SalesRecords对象
             alert("购买成功")
           })
           .catch(error => {

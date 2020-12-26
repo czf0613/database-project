@@ -125,6 +125,7 @@ export default {
   name: "LoginPage",
   data() {
     return {
+      gender2:0,
       playOptions: {
         animationData: animationData,
         loop: true,
@@ -161,8 +162,21 @@ export default {
           .then(response => {
             localStorage.setItem('userName', response.data.credential.userName)
             localStorage.setItem('userId', response.data.credential.id)
+            localStorage.setItem('name', response.data.credential.name)
+            localStorage.setItem('serialNumber', response.data.credential.serialNumber)
             localStorage.setItem('token', response.data.token)
+            this.gender2=response.data.gender
+            if (this.gender2 === '0')
+              localStorage.setItem('gender', '男')
+            else if (this.gender2 === '1')
+              localStorage.setItem('gender', '女')
+            else if (this.gender2 === '2')
+              localStorage.setItem('gender', '保密')
+            else if (this.gender2 === '3')
+              localStorage.setItem('gender', '未知')
             this.$router.replace({name: "home", params: {page: this.loginFormData.role}})
+
+
           })
           .catch(error => {
             console.log(error)
