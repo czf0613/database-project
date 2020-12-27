@@ -66,13 +66,13 @@ public User delete(User user);
 ……
 ```
 
-By making combinations of class members, you can create a lot of function to substitude SQL commands. Actually, I didn't write any raw SQL query commands in my program but all prototype functions.
+By making combinations of class members, you can create a lot of function to substitute SQL commands. Actually, I didn't write any raw SQL query commands in my program but all prototype functions.
 
 
 
 ## Not enough? A cutting-edge technology is coming.
 
-Here is a brand new technology that helps you greately reduce intermediate tables. We have to go back to a situation of one-to-many mapping(don't care about many-to-many mapping since it can be reduced to one-to-many mapping.) Just consider, one student can buy several commodities, so there is a one-to-many relationship. Traditionally, we will set up a intermediate table that consists of primary key of student and primary key of commodity together to store them. 
+Here is a brand new technology that helps you greatly reduce intermediate tables. We have to go back to a situation of one-to-many mapping(don't care about many-to-many mapping since it can be reduced to one-to-many mapping.) Just consider, one student can buy several commodities, so there is a one-to-many relationship. Traditionally, we will set up a intermediate table that consists of primary key of student and primary key of commodity together to store them. 
 
 But, this strategy has many disadvantages:
 
