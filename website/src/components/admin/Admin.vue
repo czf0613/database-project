@@ -158,15 +158,20 @@ export default {
         url += `/statistic/listCommodities`
       else if (this.index === '4-1')
         url += `/statistic/listSalesRecords`
+      else
+        return
+
       url += `?limit=${this.limit}`
       this.GLOBAL.fly.get(url)
           .then(response => {
-            if (this.index === '1-1' && this.index === '2-1')
+            if (this.index === '1-1')
               this.students = response.data
-            else if(this.index==='3-1')
-              this.commodities=response.data
-            else if(this.index==='4-1')
-              this.salesRecords=response.data
+            else if (this.index === '2-1')
+              this.admins = response.data
+            else if (this.index === '3-1')
+              this.commodities = response.data
+            else if (this.index === '4-1')
+              this.salesRecords = response.data
             console.log(response)
           })
           .catch(error => {

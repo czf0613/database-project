@@ -1,7 +1,7 @@
 <template>
   <div class="center">
     <div class="align">
-      <el-image v-for="url in commodity.photos" lazy :src="url" :key="url" style="width: 200px; height: 200px">
+      <el-image v-for="url in commodity.photos" lazy :src="url" :key="url" style="height: 200px" fit="contain">
         <div slot="placeholder" class="image-slot">
           加载中<span class="dot">...</span>
         </div>
