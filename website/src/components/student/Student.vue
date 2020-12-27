@@ -14,48 +14,46 @@
       </el-col>
     </el-header>
 
-    <el-aside style="background-color: rgb(238,241,246)">
-      <el-menu default-active="1" @select="onMenuItemSelected">
-        <el-menu-item index="1">
-          <template slot="title"><i class="el-icon-message"></i>商城</template>
-        </el-menu-item>
+    <el-container style="flex-direction: row">
+      <el-aside>
+        <el-menu default-active="1" @select="onMenuItemSelected">
+          <el-menu-item index="1">
+            <template slot="title"><i class="el-icon-goods"></i>商城</template>
+          </el-menu-item>
 
-        <el-submenu index="2">
-          <template slot="title"><i class="el-icon-message"></i>我的商品</template>
-          <el-menu-item-group>
-            <el-menu-item index="2-1" @click="searchMyAdd">我发布的</el-menu-item>
-            <el-menu-item index="2-2" @click="searchMySold">我卖出的</el-menu-item>
-            <el-menu-item index="2-3" @click="searchMyBought">我买到的</el-menu-item>
-          </el-menu-item-group>
-        </el-submenu>
-      </el-menu>
-    </el-aside>
+          <el-submenu index="2">
+            <template slot="title"><i class="el-icon-menu"></i>我的商品</template>
+            <el-menu-item-group>
+              <el-menu-item index="2-1">我发布的</el-menu-item>
+              <el-menu-item index="2-2">我卖出的</el-menu-item>
+              <el-menu-item index="2-3">我买到的</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+        </el-menu>
+      </el-aside>
 
-    <el-main>
-      <div v-if="index==='1'">
+      <el-main>
+      <span v-if="index==='1'">
         <div v-if="!addingCommodity">
           <Commodity v-for="item in commodities" :commodity="item" :judge="{add:false}" :key="item.id"/>
         </div>
 
         <ReleaseNewOne v-if="addingCommodity"/>
-      </div>
+      </span>
 
-      <div v-if="index==='2-1'">
+        <span v-if="index==='2-1'">
         <Commodity v-for="item in allMyCommodities" :commodity="item" :judge="{add:true}" :key="item.id"/>
-      </div>
+      </span>
 
-      <div v-else-if="index==='2-2'">
-        <SalesRecord v-for="item in sold" :sold="item" :key="item.id"/>
-      </div>
+        <span v-else-if="index==='2-2'">
+        <SalesRecord v-for="item in sold" :salesRecord="item" :key="item.id"/>
+      </span>
 
-      <div v-else-if="index==='2-3'">
-        <SalesRecord v-for="item in bought" :bought="item" :key="item.id"/>
-      </div>
-
-      <div v-else-if="index==='3-1'">
-
-      </div>
-    </el-main>
+        <span v-else-if="index==='2-3'">
+        <SalesRecord v-for="item in bought" :salesRecord="item" :key="item.id"/>
+      </span>
+      </el-main>
+    </el-container>
   </el-container>
 </template>
 
@@ -101,27 +99,8 @@ export default {
       this.GLOBAL.fly.get(`${this.GLOBAL.domain}/statistic/myCommodities?username=${this.userName}`)
           .then(response => {
             this.allMyCommodities = response.data.allMyCommodities
-            console.log(response)
-          })
-          .catch(error => {
-            console.log(error)
-          })
-    },
-    searchMySold() {
-      this.GLOBAL.fly.get(`${this.GLOBAL.domain}/statistic/myCommodities?username=${this.userName}`)
-          .then(response => {
             this.sold = response.data.sold
-            console.log(response)
-          })
-          .catch(error => {
-            console.log(error)
-          })
-    },
-    searchMyBought() {
-      this.GLOBAL.fly.get(`${this.GLOBAL.domain}/statistic/myCommodities?username=${this.userName}`)
-          .then(response => {
             this.bought = response.data.bought
-            console.log(response)
           })
           .catch(error => {
             console.log(error)
@@ -133,10 +112,34 @@ export default {
     onMenuItemSelected(index) {
       this.index = index
     }
+  },
+  watch: {
+    index: function () {
+      if (this.index.indexOf("2") !== -1)
+        this.searchMyAdd()
+    }
   }
 }
 </script>
 
 <style scoped>
+.el-header, .el-footer {
+  background-color: #B3C0D1;
+  color: #333;
+  text-align: center;
+  line-height: 60px;
+}
 
+.el-aside {
+  background-color: #D3DCE6;
+  color: #333;
+  text-align: center;
+  line-height: 200px;
+}
+
+.el-main {
+  background-color: #E9EEF3;
+  color: #333;
+  text-align: center;
+}
 </style>

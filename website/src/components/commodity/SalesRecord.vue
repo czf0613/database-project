@@ -5,27 +5,18 @@
     <p>交易时间：{{ salesRecord.transactionTime }}</p>
     <p>收货地址：{{ salesRecord.addressDetail }}</p>
     <p>交易评价：{{ salesRecord.comment }}</p>
-    <el-button type="warning" @click="salesRecord.check=true">确认收货</el-button>
+    <el-button type="warning" @click="check=true">确认收货</el-button>
     <el-button type="danger" @click="openAddComment">添加评价</el-button>
 
-    <el-dialog title="确认收货" :visible.sync="salesRecord.check">
-
-      <el-form ref="form" label-width="100px" class="right">
-        <el-form-item label="交易评价">
-          <el-input v-model="commentt"></el-input>
-        </el-form-item>
-      </el-form>
-
-      <div>
-        <el-button type="danger" @click="addComment">添加评价</el-button>
-      </div>
+    <el-dialog title="确认收货" :visible.sync="check">
+      <h2>确认收货吗？</h2>
       <div slot="footer" class="dialog-footer">
         <el-button @click="salesRecord.check = false">取 消</el-button>
         <el-button type="danger" @click="confirm">确认收货</el-button>
       </div>
     </el-dialog>
 
-    <el-dialog v-if="commentDiaVisible===true" title="添加评价">
+    <el-dialog :visible.sync="commentDiaVisible" title="添加评价">
       <el-form ref="form" label-width="100px" class="right">
 
         <el-form-item label="交易评价">
@@ -53,14 +44,14 @@ export default {
       comment: '',
       transactionTime: '',
       auction: 0.0,
-      check: false
     }
   },
   data() {
     return {
       commentDiaVisible: false,
       commentt: '',
-      userName: localStorage.getItem('userName')
+      userName: localStorage.getItem('userName'),
+      check: false
     }
   },
   methods: {
@@ -80,7 +71,6 @@ export default {
               }
           )
     },
-
     addComment() {
       if (this.salesRecord.check === false)
         return
@@ -102,7 +92,6 @@ export default {
               }
           )
     },
-
     openAddComment() {
       this.commentDiaVisible = true
     }

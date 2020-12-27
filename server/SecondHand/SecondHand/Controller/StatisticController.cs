@@ -25,6 +25,16 @@ namespace SecondHand.controller
         public async Task<ActionResult> MyCommodities(string userName)
         {
             var student = await databases.Students.FirstAsync(s => s.UserName == userName);
+            await databases.Entry(student)
+                .Collection(s => s.AllMyCommodities)
+                .LoadAsync();
+            await databases.Entry(student)
+                .Collection(s => s.Bought)
+                .LoadAsync();
+            await databases.Entry(student)
+                .Collection(s => s.Sold)
+                .LoadAsync();
+
             var body = new MyGoods
             {
                 AllMyCommodities = student.AllMyCommodities,
