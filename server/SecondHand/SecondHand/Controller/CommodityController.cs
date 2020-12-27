@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +24,7 @@ namespace SecondHand.controller
             var student = databases.Students.FirstAsync(u => u.UserName == userName);
             commodity.Seller = await student;
             var entity = await databases.Commodities.AddAsync(commodity);
+            (await student).AllMyCommodities.Add(entity.Entity);
             await databases.SaveChangesAsync();
 
             return Ok(entity.Entity);

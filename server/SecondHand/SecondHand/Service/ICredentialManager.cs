@@ -64,13 +64,15 @@ namespace SecondHand.Service
                 Token = Guid.NewGuid().ToString("N"),
                 User = user
             };
-            var record = databases.LoginRecords.AddAsync(loginRecord);
+            var record = (await databases.LoginRecords.AddAsync(loginRecord)).Entity;
 
             var credential = new IdentityCredential
             {
-                ExpireDate = loginRecord.Time.AddDays(15),
-                Token = loginRecord.Token
+                ExpireDate = record.Time.AddDays(15),
+                Token = record.Token
             };
+            user.LoginRecords.Add(record);
+            
             if (role == Role.STUDENT)
             {
                 credential.Credential = await databases.Students.FirstAsync(s => s.UserName == userName);

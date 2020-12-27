@@ -36,7 +36,9 @@ namespace SecondHand.controller
                 };
                 commodity.Sold = true;
                 record = (await databases.SalesRecords.AddAsync(record)).Entity;
+                (await student).Bought.Add(record);
                 commodity.SalesRecord = record;
+                commodity.Seller.Sold.Add(record);
                 await databases.SaveChangesAsync();
 
                 return Ok(record);

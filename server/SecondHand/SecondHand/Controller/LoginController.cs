@@ -105,7 +105,7 @@ namespace SecondHand.controller
             old.Dormitory = student.Dormitory;
 
             await databases.SaveChangesAsync();
-            return Ok("Modify Self Information Success");
+            return Ok(old);
         }
 
         [HttpPost("[action]")]
@@ -125,7 +125,7 @@ namespace SecondHand.controller
             old.Level = admin.Level;
 
             await databases.SaveChangesAsync();
-            return Ok("Modify Self Information Success");
+            return Ok(old);
         }
 
         [HttpPost("[action]")]
