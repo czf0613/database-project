@@ -28,13 +28,6 @@
             <el-menu-item index="2-3" @click="searchMyBought">我买到的</el-menu-item>
           </el-menu-item-group>
         </el-submenu>
-
-        <el-submenu index="3" >
-          <template slot="title"><i class="el-icon-message"></i>个人信息</template>
-          <el-menu-item-group>
-            <el-menu-item index="3-1">修改个人信息</el-menu-item>
-          </el-menu-item-group>
-        </el-submenu>
       </el-menu>
     </el-aside>
 

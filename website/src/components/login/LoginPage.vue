@@ -125,7 +125,6 @@ export default {
   name: "LoginPage",
   data() {
     return {
-      gender2:0,
       playOptions: {
         animationData: animationData,
         loop: true,
@@ -164,19 +163,15 @@ export default {
             localStorage.setItem('userId', response.data.credential.id)
             localStorage.setItem('name', response.data.credential.name)
             localStorage.setItem('serialNumber', response.data.credential.serialNumber)
+            localStorage.setItem('gender', response.data.credential.gender)
+            localStorage.setItem('major', response.data.credential.major)
+            localStorage.setItem('college', response.data.credential.college)
+            localStorage.setItem('dormitory', response.data.credential.dormitory)
+            localStorage.setItem('phone', response.data.credential.phone)
             localStorage.setItem('token', response.data.token)
-            this.gender2=response.data.gender
-            if (this.gender2 === '0')
-              localStorage.setItem('gender', '男')
-            else if (this.gender2 === '1')
-              localStorage.setItem('gender', '女')
-            else if (this.gender2 === '2')
-              localStorage.setItem('gender', '保密')
-            else if (this.gender2 === '3')
-              localStorage.setItem('gender', '未知')
+            localStorage.setItem('role', this.loginFormData.role)
+            localStorage.setItem('birthday', response.data.credential.birthday)
             this.$router.replace({name: "home", params: {page: this.loginFormData.role}})
-
-
           })
           .catch(error => {
             console.log(error)

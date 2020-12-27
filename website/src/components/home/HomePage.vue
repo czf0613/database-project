@@ -20,7 +20,7 @@
       <Admin v-else-if="page===1"/>
     </el-main>
 
-    <el-dialog v-if ="dialogFormVisible === true" title="密码修改" :visible.sync="changePassOrNot">
+    <el-dialog v-if="dialogFormVisible === true" title="密码修改" :visible.sync="changePassOrNot">
       <el-form ref="form" :model="changePassInformation" label-width="100px" class="right">
 
         <el-form-item label="旧密码">
@@ -40,18 +40,8 @@
       </div>
     </el-dialog>
 
-    <el-dialog v-if ="dialogFormVisible === true" title="信息修改" :visible.sync="changeInforOrNot">
+    <el-dialog v-if="dialogFormVisible === true" title="信息修改" :visible.sync="changeInforOrNot">
       <el-form ref="form" :model="changeInfor" label-width="100px" class="right">
-
-
-        <el-form-item label="用户名">
-          <el-input v-model="changeInfor.userName" placeholder="请输入用户名"></el-input>
-        </el-form-item>
-
-        <el-form-item label="密码（不可修改）">
-          <el-input v-model="changeInfor.password" show-password placeholder="请输入密码"></el-input>
-        </el-form-item>
-
         <el-form-item label="性别">
           <el-select v-model="changeInfor.gender" placeholder="请选择用户角色">
             <el-option label="男" :value="0"></el-option>
@@ -62,7 +52,7 @@
         </el-form-item>
 
         <el-form-item label="学号或工号">
-          <el-input v-model="changeInfor.serialNumber" placeholder="请输入学号或工号"></el-input>
+          <el-input v-model="changeInfor.serialNumber" placeholder="请输入学号或工号" :disabled="true"></el-input>
         </el-form-item>
 
         <el-form-item label="手机号码">
@@ -121,25 +111,31 @@ export default {
         password: ''
       },
       changeInfor: {
-        role: 0,
+        role: localStorage.getItem('role'),
         userName: localStorage.getItem('userName'),
-        password: '',
-        gender: 2,
-        serialNumber: '',
-        name: '',
-        phone: '',
-        birthDay: new Date(),
-        college: '',
-        major: '',
-        dormitory: ''
+        gender: parseInt(localStorage.getItem('gender')),
+        serialNumber: localStorage.getItem('serialNumber'),
+        name: localStorage.getItem('name'),
+        phone: localStorage.getItem('phone'),
+        birthDay: localStorage.getItem('birthday'),
+        college: localStorage.getItem('college'),
+        major: localStorage.getItem('major'),
+        dormitory: localStorage.getItem('dormitory')
       }
     }
   },
 
   methods: {
     logOut() {
-      localStorage.clear()
-      this.$router.replace('login')
+      this.GLOBAL.fly.post(`/api/logOut?token=${localStorage.getItem('token')}`)
+          .then(() => {
+            localStorage.clear()
+            this.$router.replace('login')
+          })
+          .catch(error => {
+            console.log(error)
+            alert('退出失败')
+          })
     },
     changePassword() {
       this.changePassOrNot = !this.changePassOrNot
@@ -173,17 +169,18 @@ export default {
         url += `/adminSelf`
         this.changeInfor.role = 1
       }
-      //url += `?userName=${this.changeInfor.userName}&password=${this.changeInfor.password}`
 
       this.GLOBAL.fly.post(url, this.changeInfor)
           .then(response => {
             console.log(response)
-            this.loginFormData.role = this.changeInfor.role
-            this.loginFormData.userName = this.changeInfor.userName
-            this.loginFormData.password = this.changeInfor.password
-            this.login()
+            localStorage.setItem('name', response.data.name)
+            localStorage.setItem('gender', response.data.gender)
+            localStorage.setItem('major', response.data.major)
+            localStorage.setItem('college', response.data.college)
+            localStorage.setItem('dormitory', response.data.dormitory)
+            localStorage.setItem('phone', response.data.phone)
+            localStorage.setItem('birthday', response.data.birthday)
             alert('修改成功')
-
           })
           .catch(error => {
             console.log(error)
@@ -195,13 +192,13 @@ export default {
       this.dialogFormVisible = true
     }
   },
-    created() {
-      this.page = this.$route.params.page
-      if (this.page === undefined)
-        this.page = parseInt(localStorage.getItem('page'))
-      else
-        localStorage.setItem('page', `${this.page}`)
-    }
+  created() {
+    this.page = this.$route.params.page
+    if (this.page === undefined)
+      this.page = parseInt(localStorage.getItem('page'))
+    else
+      localStorage.setItem('page', `${this.page}`)
+  }
 }
 </script>
 

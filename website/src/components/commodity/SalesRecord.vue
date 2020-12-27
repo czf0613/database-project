@@ -10,11 +10,10 @@
 
     <el-dialog title="确认收货" :visible.sync="salesRecord.check">
 
-      <el-form ref="form" : label-width="100px" class="right">
+      <el-form ref="form" label-width="100px" class="right">
         <el-form-item label="交易评价">
           <el-input v-model="commentt"></el-input>
         </el-form-item>
-
       </el-form>
 
       <div>
@@ -26,8 +25,8 @@
       </div>
     </el-dialog>
 
-    <el-dialog v-if="commentDiaVisible===true" title="添加评价" >
-      <el-form ref="form"  label-width="100px" class="right">
+    <el-dialog v-if="commentDiaVisible===true" title="添加评价">
+      <el-form ref="form" label-width="100px" class="right">
 
         <el-form-item label="交易评价">
           <el-input v-model="commentt"></el-input>
@@ -50,8 +49,8 @@ export default {
     salesRecord: {
       id: 0,
       commodityId: 0,
-      addressDetail:'',
-      comment:'',
+      addressDetail: '',
+      comment: '',
       transactionTime: '',
       auction: 0.0,
       check: false
@@ -60,7 +59,7 @@ export default {
   data() {
     return {
       commentDiaVisible: false,
-      commentt:'',
+      commentt: '',
       userName: localStorage.getItem('userName')
     }
   },
@@ -73,16 +72,16 @@ export default {
           .then(response => {
             console.log(response)
             //返回SalesRecords对象该怎么使用？？
-            alert("收获成功")
+            alert("收货成功")
           })
           .catch(error => {
                 console.log(error)
-                alert("收获失败")
+                alert("收货失败")
               }
           )
     },
 
-    addComment(){
+    addComment() {
       if (this.salesRecord.check === false)
         return
 
@@ -104,7 +103,7 @@ export default {
           )
     },
 
-    openAddComment(){
+    openAddComment() {
       this.commentDiaVisible = true
     }
   }
