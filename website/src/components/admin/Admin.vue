@@ -81,7 +81,7 @@
           <el-table-column prop="id" label="商品id" width="180"></el-table-column>
           <el-table-column prop="title" label="商品名称" width="180"></el-table-column>
           <el-table-column prop="description" label="商品详细" width="180"></el-table-column>
-          <el-table-column prop="photo" label="图片" width="180"></el-table-column>
+          <el-table-column prop="price" label="商品价格" width="180"></el-table-column>
         </el-table>
       </div>
       <div v-else-if="index==='3-2'">
@@ -92,9 +92,9 @@
         <el-table :data="salesRecords" height="250" border style="width: 100%">
           <el-table-column prop="id" label="销售记录id" width="180"></el-table-column>
           <el-table-column prop="commodityId" label="商品id" width="180"></el-table-column>
-          <el-table-column prop="commodity.title" label="商品名称" width="180"></el-table-column>
-          <el-table-column prop="seller.name" label="卖家姓名" width="180"></el-table-column>
-          <el-table-column prop="buyer.name" label="买家姓名" width="180"></el-table-column>
+          <el-table-column prop="comment" label="评价（默认为空）" width="180"></el-table-column>
+          <el-table-column prop="auction" label="成交价格" width="180"></el-table-column>
+          <el-table-column prop="check" label="是否签收" width="180"></el-table-column>
         </el-table>
       </div>
       <div v-else-if="index==='4-2'">
@@ -102,19 +102,16 @@
       </div>
       <div v-else-if="index==='5'">
         <el-header>
-          昵称：{{userName}}
+          昵称：{{ userName }}
         </el-header>
         <el-header>
-          id: {{userId}}
+          id: {{ userId }}
         </el-header>
         <el-header>
-          姓名： {{name}}
+          姓名： {{ name }}
         </el-header>
         <el-header>
-          性别： {{gender}}
-        </el-header>
-        <el-header>
-          学（工）号： {{serial}}
+          学（工）号： {{ serial }}
         </el-header>
       </div>
     </el-main>
@@ -140,12 +137,12 @@ export default {
       admins: [],
       salesRecords: [],
       limit: 100,
-      userName:localStorage.getItem('userName'),
-      userId:localStorage.getItem('userId'),
-      token:localStorage.getItem('token'),
-      name:localStorage.getItem('name'),
-      gender:localStorage.getItem('gender'),
-      serial:localStorage.getItem('serialNumber')
+      userName: localStorage.getItem('userName'),
+      userId: localStorage.getItem('userId'),
+      token: localStorage.getItem('token'),
+      name: localStorage.getItem('name'),
+      gender: localStorage.getItem('gender'),
+      serial: localStorage.getItem('serialNumber')
     }
 
   },
@@ -158,13 +155,18 @@ export default {
       else if (this.index === '2-1')
         url += `/statistic/listAdmins`
       else if (this.index === '3-1')
-        url += `/statistic/listAdmins`
+        url += `/statistic/listCommodities`
       else if (this.index === '4-1')
         url += `/statistic/listSalesRecords`
       url += `?limit=${this.limit}`
       this.GLOBAL.fly.get(url)
           .then(response => {
-            this.students = response.data
+            if (this.index === '1-1' && this.index === '2-1')
+              this.students = response.data
+            else if(this.index==='3-1')
+              this.commodities=response.data
+            else if(this.index==='4-1')
+              this.salesRecords=response.data
             console.log(response)
           })
           .catch(error => {
